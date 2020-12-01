@@ -16,11 +16,11 @@ int main() {
   }
 
   // read file
-  auto start = chrono::high_resolution_clock::now();
   int number;
   while (my_file >> number) {
     v.push_back(number);
   }
+  auto start = chrono::high_resolution_clock::now();
 
   // iteration
   for (auto i = begin(v); i != end(v); i++) {
@@ -29,7 +29,7 @@ int main() {
         if (*i + *j + *k == 2020) {
           cout << "Result: " << *i * *j * *k << endl;
           auto end = chrono::high_resolution_clock::now();
-          auto duration = chrono::duration_cast<chrono::microseconds>(end - start);
+          auto duration = chrono::duration_cast<chrono::milliseconds>(end - start);
           cout << "Exec Time: " << duration.count() << endl;
           my_file.close();
           return 0;
