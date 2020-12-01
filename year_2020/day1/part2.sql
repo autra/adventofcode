@@ -8,9 +8,11 @@ select
   d1.expense * d2.expense * d3.expense as "Answer!!"
 from day1 d1, day1 d2, day1 d3
 where
+  -- speed up query by 10!
+  d1.expense + d2.expense < 2020 and
   d1.expense + d2.expense + d3.expense = 2020
     -- let's exclude permutation
     -- here, I actually gain ~100ms doing these tests
-    -- (apart from getting no duplicates)
+    -- (apart from not getting duplicates)
   and d1.expense <= d2.expense
   and d2.expense <= d3.expense
