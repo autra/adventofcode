@@ -4,3 +4,7 @@ drop table if exists day1;
 create table day1(expense integer);
 
 \copy day1 from './input'
+
+create index on day1(expense);
+
+vaccuum analyze day1;
