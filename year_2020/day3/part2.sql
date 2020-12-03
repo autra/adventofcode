@@ -14,15 +14,11 @@ from move
 -- lateral FTW
 join lateral (
   select count(*) as "Bruise count"
-    from (
-      -- a bit of complexity here because arrays are 1-based in postgresql
-      -- that's a case where I'd definitely have preferred 0-based indexing
-      -- but maybe it's because I'm more used to it?
-      select iso[1 + ((line_number - 1) * move.right) % (cardinality(iso))] = '#' "Ouch!!"-- ouch !
-      from day3
-      -- this only select 1 lines every "down" line
-      where line_number % move.down = 0
-  ) as ouch_list
-  -- count only when "ouch!"
-  where "Ouch!!"
-) as ouch_count_per_move on true;
+  from day3
+  -- this only select 1 lines every "down" line
+  where line_number % move.down = 0
+  -- a bit of complexity here because arrays are 1-based in postgresql
+  -- that's a case where I'd definitely have preferred 0-based indexing
+  -- but maybe it's because I'm more used to it?
+  and iso[1 + ((line_number - 1) * move.right) % (cardinality(iso))] = '#' -- "Ouch!!"
+) as ouch_count_move on true;
