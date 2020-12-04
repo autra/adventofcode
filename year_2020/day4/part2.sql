@@ -3,7 +3,6 @@
 --
 -- we need to classify each line to group them later
 -- doing this by counting the number of empty line before the current row
--- the class value will be the row_number of the next empty line
 with classified(passport, class) as (
   select
     passport,
