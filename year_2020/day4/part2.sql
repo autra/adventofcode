@@ -1,33 +1,24 @@
 -- I give up my "extra challenge" of part1, because I feel I'd need pgplsql for
 -- that. Maybe it's possible in pure sql?
 --
--- We need to classify each line to group them later
--- I take the row number of the next empty line as class
-with classified as (
+-- we need to classify each line to group them later
+-- doing this by counting the number of empty line before the current row
+-- the class value will be the row_number of the next empty line
+with classified(passport, class) as (
   select
-    d.row_number,
-    d.passport,
-    coalesce(
-      (select d2.row_number
-      from day4 d2
-      where d2.row_number >= d.row_number
-      and d2.passport = ''
-      order by row_number
-      limit 1
-    ), 0) as class
-  from day4 d
-  where d.passport != ''
+    passport,
+    count(*) filter (where passport = '') over (order by row_number) as class
+  from day4
 ),
 -- let's aggregate according to class and we have one nice row per passport
-agg as (
-  select class, string_agg(passport, ' ') as passport
+agg(passport) as (
+  select string_agg(passport, ' ')
   from classified
   group by class
 ),
 -- let's parse each row to create nice columns
-parsed as (
+parsed(byr, iyr, eyr, hgt, hgt_unit, hcl, ecl, pid) as (
   select
-    class,
     -- byr is a 4 digit integer
     substring(passport, 'byr:(\d{4})')::integer as byr,
     -- iyr is a 4 digit integer
@@ -56,5 +47,4 @@ where
   and hcl != ''
   and ecl != ''
   and length(pid) = 9
-  order by class
 ;

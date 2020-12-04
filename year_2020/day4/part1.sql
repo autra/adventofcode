@@ -10,31 +10,23 @@
 with required_fields(field) as (
   values ('byr'), ('iyr'), ('eyr'), ('hgt'), ('hcl'), ('ecl'), ('pid')
 ),
--- ok so we need to classify each line to group them later
+-- we need to classify each line to group them later
+-- doing this by counting the number of empty line before the current row
 -- the class value will be the row_number of the next empty line
-classified as (
+classified(passport, class) as (
   select
-    d.row_number,
-    d.passport,
-    (
-      select d2.row_number
-      from day4 d2
-      where d2.row_number >= d.row_number
-      and d2.passport = ''
-      order by row_number
-      limit 1
-    ) as class
-  from day4 d
-  where d.passport != ''
+    passport,
+    count(*) filter (where passport = '') over (order by row_number) as class
+  from day4
 ),
 -- aggregation according to class and we have one nice row per passport
-agg as (
+agg(passport) as (
   select string_agg(passport, ' ') as passport
   from classified
   group by class
 ),
 -- criteria applied...
-valid_entry as (
+valid_entry(valid) as (
   -- let's not forget the ':' to avoid false positive!
   select bool_and(a.passport like '%' || r.field || ':%') as valid
   from agg a, required_fields r
