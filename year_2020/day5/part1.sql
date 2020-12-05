@@ -1,16 +1,19 @@
+-- FLRB are actually a binary number representing up to 2^10
 -- convert to binary then integer
 with taken_seats(id) as (
   select
-    -- I'm SURE there's a better way
-    replace(
-      replace(
-          replace(
-            replace(
-              seat,
-              'R', '1'
-            ),
-            'L', '0'),
-        'B', '1'),
-      'F', '0')::bit(10)::integer
+    -- F and L are 0, R and B are 1
+    -- then use it as bit, then integer
+    regexp_replace(
+      regexp_replace(
+        seat,
+        'B|R',
+        '1',
+        'g'
+      ),
+      'F|L',
+      '0',
+      'g'
+    )::bit(10)::integer
   from day5
 ) select max(id) from taken_seats;
