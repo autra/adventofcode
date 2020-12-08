@@ -4,6 +4,7 @@ with recursive parsed as (
 ordered_inst(row_number, inst, arg, ancestors, has_changed) as (
   -- let's follow execution
   -- a row represent a "line to be executed" (the pointer is just before)
+  -- for each path, we can have one "joker", one switch between nop and jmp
   select
     row_number,
     inst,
